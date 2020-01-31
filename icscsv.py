@@ -1,7 +1,7 @@
 import vobject
 import csv
 
-with open('calendar2020.csv', mode='w') as csv_out:
+with open('calendar2022.csv', mode='w') as csv_out:
     csv_writer = csv.writer(csv_out, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     csv_writer.writerow(['WHAT', 'FROM', 'TO', 'DESCRIPTION', 'LOCATION'])
 
@@ -12,6 +12,13 @@ with open('calendar2020.csv', mode='w') as csv_out:
     for cal in vobject.readComponents(data):
         for component in cal.components():
             if component.name == "VEVENT":
+                writerow = []
+                for attr in ['summary', 'dtstart', 'dtend', 'description', 'location']:
+                    if hasattr(component, attr):
+                        writerow.append(getattr(component, attr).valueRepr())
+                    else:
+                        writerow.append('Undefined!')
 
-                csv_writer.writerow([component.summary.valueRepr(),component.dtstart.valueRepr(),component.dtend.valueRepr(),component.description.valueRepr(),component.location.valueRepr()])
-   
+                print(writerow)
+                csv_writer.writerow(writerow)
+                
